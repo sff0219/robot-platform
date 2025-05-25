@@ -1,0 +1,4 @@
+robot-service/venv/
+robot-service/app/__pycache__/
+robot-service/tests/__pycache__/
+.pytest_cache/
