@@ -5,7 +5,7 @@ A FastAPI-based REST API service for managing robots.
 ## Features
 
 - REST API endpoints for managing robots (GET, POST, PATCH)
-- Prometheus metrics endpoint (TODO)
+- Prometheus metrics endpoint
 - Logging
 - Unit tests
 - Docker support
@@ -15,6 +15,7 @@ A FastAPI-based REST API service for managing robots.
 - `GET /robots` - Get all robots with their status
 - `POST /robots` - Add a new robot
 - `PATCH /robot` - Update robot data for a specific robot
+- `GET /metrics` - Prometheus metrics endpoint
 
 ## Local Development Environment
 
@@ -57,3 +58,9 @@ docker run -p 8000:8000 robot-service
 Once the service is running, you can access:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## Metrics
+
+Prometheus metrics are available at `/metrics` endpoint:
+- `robots_added_total`: Counter for number of robots added
+- `request_duration_seconds`: Histogram for request durations

@@ -21,6 +21,9 @@ echo "Applying Kubernetes manifests"
 kubectl apply -f k8s/robot-service/deployment.yaml
 kubectl apply -f k8s/robot-service/service.yaml
 kubectl apply -f k8s/ingress.yaml
+echo "Deploying Prometheus"
+kubectl apply -f k8s/observability/prometheus-config.yaml
+kubectl apply -f k8s/observability/prometheus.yaml
 
 MINIKUBE_IP=$(minikube ip)
 echo "Adding robot.local to /etc/hosts"
@@ -32,5 +35,6 @@ fi
 
 echo "Waiting for pods to be ready"
 kubectl wait --for=condition=ready pod -l app=robot-service --timeout=60s
+kubectl wait --for=condition=ready pod -l app=prometheus --timeout=60s
 
 echo "Setup complete! The robot-service APPI is available at http://robot.local"

@@ -99,3 +99,10 @@ def test_patch_robot_invalid_field():
     )
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "Extra inputs are not permitted"
+
+
+def test_metrics_endpoint():
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert "robots_added_total" in response.text
+    assert "request_duration_seconds" in response.text

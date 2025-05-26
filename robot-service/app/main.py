@@ -1,8 +1,11 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel, ConfigDict
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from typing import List, Optional
 import logging
 import uuid
+import time
 
 # Configure logging
 logging.basicConfig(
@@ -12,6 +15,10 @@ logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
 app = FastAPI(title="Robot Service API")
+
+# Setup Prometheus metrics
+ROBOTS_ADDED = Counter("robots_added_total", "Total number of robots added")
+REQUEST_DURATION = Histogram("request_duration_seconds", "Request duration in seconds")
 
 
 # Robot data classes
@@ -39,6 +46,16 @@ class RobotPatch(BaseModel):
 robots = {}
 
 
+# Middleware for request duration calculation
+@app.middleware("http")
+async def track_request_duration(request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+    REQUEST_DURATION.observe(duration)
+    return response
+
+
 # API routes
 @app.get("/robots", response_model=List[RobotWithID])
 async def get_robots():
@@ -54,6 +71,8 @@ async def add_robot(robot: Robot):
     id = str(uuid.uuid4())
     robot_meta = RobotWithID(id=id, **robot.model_dump())
     robots[robot_meta.id] = robot_meta
+
+    ROBOTS_ADDED.inc()
     return robot_meta
 
 
@@ -81,6 +100,12 @@ async def update_robot(robot_id: str, robot: RobotPatch):
 
     robots[robot_id] = existing_robot
     return existing_robot
+
+
+@app.get("/metrics")
+async def get_metrics():
+    """Expose Prometheus metrics"""
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 if __name__ == "__main__":
