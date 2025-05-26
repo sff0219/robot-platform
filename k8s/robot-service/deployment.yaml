@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: robot-service
+  labels:
+    app: robot-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: robot-service
+  template:
+    metadata:
+      labels:
+        app: robot-service
+    spec:
+      containers:
+      - name: robot-service
+        image: robot-service:latest
+        imagePullPolicy: Never  # Use local built image
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
