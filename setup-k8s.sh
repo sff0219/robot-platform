@@ -18,12 +18,15 @@ echo "Building robot-service docker image"
 docker build -t robot-service:latest ./robot-service
 
 echo "Applying Kubernetes manifests"
+echo "Deploying robot-service"
 kubectl apply -f k8s/robot-service/deployment.yaml
 kubectl apply -f k8s/robot-service/service.yaml
 kubectl apply -f k8s/ingress.yaml
-echo "Deploying Prometheus"
+echo "Deploying Prometheus, Promtail and loki"
 kubectl apply -f k8s/observability/prometheus-config.yaml
 kubectl apply -f k8s/observability/prometheus.yaml
+kubectl apply -f k8s/observability/loki.yaml
+kubectl apply -f k8s/observability/promtail.yaml
 
 MINIKUBE_IP=$(minikube ip)
 echo "Adding robot.local to /etc/hosts"
@@ -36,5 +39,7 @@ fi
 echo "Waiting for pods to be ready"
 kubectl wait --for=condition=ready pod -l app=robot-service --timeout=60s
 kubectl wait --for=condition=ready pod -l app=prometheus --timeout=60s
+kubectl wait --for=condition=ready pod -l app=loki --timeout=60s
+kubectl wait --for=condition=ready pod -l app=promtail --timeout=60s
 
 echo "Setup complete! The robot-service APPI is available at http://robot.local"
