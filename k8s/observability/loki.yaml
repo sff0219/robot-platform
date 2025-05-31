@@ -52,23 +52,23 @@ spec:
         app: loki
     spec:
       containers:
-      - name: loki
-        image: grafana/loki:2.9.0
-        args:
-        - "-config.file=/etc/loki/loki.yaml"
-        ports:
-        - containerPort: 3100
-        volumeMounts:
-        - name: config
-          mountPath: /etc/loki
-        - name: storage
-          mountPath: /tmp/loki
+        - name: loki
+          image: grafana/loki:2.9.0
+          args:
+            - "-config.file=/etc/loki/loki.yaml"
+          ports:
+            - containerPort: 3100
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki
+            - name: storage
+              mountPath: /tmp/loki
       volumes:
-      - name: config
-        configMap:
-          name: loki-config
-      - name: storage
-        emptyDir: {}
+        - name: config
+          configMap:
+            name: loki-config
+        - name: storage
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -78,5 +78,22 @@ spec:
   selector:
     app: loki
   ports:
-  - port: 3100
-    targetPort: 3100
+    - port: 3100
+      targetPort: 3100
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: loki-ingress
+spec:
+  rules:
+    - host: loki.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: loki
+                port:
+                  number: 3100

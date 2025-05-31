@@ -16,6 +16,13 @@ data:
           - source_labels: [__meta_kubernetes_pod_label_app]
             regex: robot-service
             action: keep
+      - job_name: 'dashboard'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: dashbaord
+            action: keep
       - job_name: 'loki'
         kubernetes_sd_configs:
           - role: pod
