@@ -12,8 +12,8 @@ The platform consists of the following components:
   - Deployed using deployment and service configurations in `robot-service/`
   - Exposed via ingress at `robot.local`
 - **Dashboard**: Frontend application to manage and monitor the robot platform
-  - Manage and monitor robots
-  - View metrics and logs with filtering and search
+  - Deployed using deployment and service configurations in `dashboard/`
+  - Exposed via ingress at `dashboard.local`
 
 ### Observability Stack
 

@@ -23,8 +23,8 @@ A modern web UI for managing and monitoring the robot platform. Built with React
 
 ## Prerequisites
 
-- Node.js (v18 or later)
-- npm (v9 or later)
+- Node.js (v18.19.1)
+- npm (9.2.0)
 - Configured Kubernetes cluster with backend services:
   - Robot Service
   - Prometheus
@@ -71,7 +71,7 @@ The dashboard interacts with the following endpoints:
 - **Prometheus**: http://localhost:9090
 
   - GET /api/v1/query_range - Query metrics for a certain range
-  - GET /api/v1/label/**name**/values - Fetch all metric names
+  - GET /api/v1/label/\_\_name\_\_/values - Fetch all metric names
 
 - **Loki**: http://localhost:3100/loki/api/v1
   - GET /labels - Get all lables of logs
